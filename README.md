@@ -1,4 +1,6 @@
-# screen-ball
+# screen-ball 在屏幕上踢球
+- [ ] 滚动动画
+- [ ] 物理碰撞
 
 ## Reference
 1. 概念来自 Bevy Discord 社区 PaulH#7052 发布的视频
