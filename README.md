@@ -1,6 +1,7 @@
 # screen-ball 在屏幕上踢球
 - [ ] 滚动动画
-- [ ] 物理碰撞
+- [ ] 通过鼠标施加力作用
+- [ ] 多显示器支持
 
 ## Reference
 1. 概念来自 Bevy Discord 社区 PaulH#7052 发布的视频
