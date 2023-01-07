@@ -1,9 +1,12 @@
-use std::time::Duration;
-
 use bevy::prelude::*;
 use bevy::window::CompositeAlphaMode;
-use bevy_rapier3d::prelude::*;
 use bevy_inspector_egui::prelude::*;
+use bevy_rapier3d::prelude::*;
+
+const AREA_LENGTH_HALF_SIZE: f32 = 50.0;
+const AREA_WIDTH_HALF_SIZE: f32 = 30.0;
+const WALL_HEIGHT_HALF_SIZE: f32 = 10.0;
+const WALL_THICKNESS: f32 = 0.1;
 
 fn main() {
     App::new()
@@ -24,7 +27,6 @@ fn main() {
         .add_startup_system(setup_camera)
         .add_startup_system(setup_physics)
         .add_system(input_force)
-        .add_system(remove_force)
         .run();
 }
 
@@ -36,12 +38,10 @@ fn main() {
 #[derive(Debug, Component)]
 pub struct Ball;
 
-#[derive(Debug, Component)]
-pub struct ForceTimer(Timer);
-
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 50.0, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
+        // transform: Transform::from_xyz(0.0, 50.0, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
+        transform: Transform::from_xyz(0.0, 50.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 }
@@ -50,35 +50,81 @@ fn setup_physics(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
     // 长方体地面
     commands
-        .spawn(Collider::cuboid(10.0, 0.1, 10.0))
-        .insert(TransformBundle::from(Transform::from_xyz(0.0, -2.0, 0.0)));
+        .spawn(Collider::cuboid(
+            AREA_LENGTH_HALF_SIZE,
+            0.1,
+            AREA_WIDTH_HALF_SIZE,
+        ))
+        .insert(TransformBundle::from(Transform::from_translation(
+            Vec3::ZERO,
+        )));
 
-    // 围墙
+    // 围墙（从Y向NEG_Y俯视）
+    // 左围墙
     commands
-        .spawn(Collider::cuboid(1.0, 10.0, 10.0))
-        .insert(TransformBundle::from(Transform::from_xyz(-10.0, -2.0, 0.0)));
+        .spawn(Collider::cuboid(
+            WALL_THICKNESS,
+            WALL_HEIGHT_HALF_SIZE,
+            AREA_WIDTH_HALF_SIZE,
+        ))
+        .insert(TransformBundle::from(Transform::from_xyz(
+            -AREA_LENGTH_HALF_SIZE,
+            WALL_HEIGHT_HALF_SIZE,
+            0.0,
+        )));
+    // 右围墙
     commands
-        .spawn(Collider::cuboid(1.0, 10.0, 10.0))
-        .insert(TransformBundle::from(Transform::from_xyz(10.0, -2.0, 0.0)));
+        .spawn(Collider::cuboid(
+            WALL_THICKNESS,
+            WALL_HEIGHT_HALF_SIZE,
+            AREA_WIDTH_HALF_SIZE,
+        ))
+        .insert(TransformBundle::from(Transform::from_xyz(
+            AREA_LENGTH_HALF_SIZE,
+            WALL_HEIGHT_HALF_SIZE,
+            0.0,
+        )));
+    // 下围墙
     commands
-        .spawn(Collider::cuboid(10.0, 10.0, 1.0))
-        .insert(TransformBundle::from(Transform::from_xyz(0.0, -2.0, 10.0)));
+        .spawn(Collider::cuboid(
+            AREA_LENGTH_HALF_SIZE,
+            WALL_HEIGHT_HALF_SIZE,
+            WALL_THICKNESS,
+        ))
+        .insert(TransformBundle::from(Transform::from_xyz(
+            0.0,
+            WALL_HEIGHT_HALF_SIZE,
+            AREA_WIDTH_HALF_SIZE,
+        )));
+    // 上围墙
     commands
-        .spawn(Collider::cuboid(10.0, 10.0, 1.0))
-        .insert(TransformBundle::from(Transform::from_xyz(0.0, -2.0, -10.0)));
+        .spawn(Collider::cuboid(
+            AREA_LENGTH_HALF_SIZE,
+            WALL_HEIGHT_HALF_SIZE,
+            WALL_THICKNESS,
+        ))
+        .insert(TransformBundle::from(Transform::from_xyz(
+            0.0,
+            WALL_HEIGHT_HALF_SIZE,
+            -AREA_WIDTH_HALF_SIZE,
+        )));
 
+    let ball_handle: Handle<Mesh> = asset_server.load("models/football.gltf#Mesh0/Primitive0");
     // 球体
     commands
         .spawn(RigidBody::Dynamic)
         .insert(Ball)
         .insert(Collider::ball(0.5))
-        .insert(Restitution::coefficient(0.7))
+        // 恢复系数，影响碰撞后的反弹程度 https://en.wikipedia.org/wiki/Coefficient_of_restitution
+        .insert(Restitution::coefficient(1.0))
         .insert(PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::UVSphere::default())),
-            material: materials.add(Color::RED.into()),
+            // mesh: meshes.add(Mesh::from(shape::UVSphere::default())),
+            mesh: ball_handle,
+            // material: materials.add(Color::RED.into()),
             transform: Transform::from_xyz(0.0, 4.0, 0.0),
             ..default()
         });
@@ -89,68 +135,61 @@ fn input_force(
     keys: Res<Input<KeyCode>>,
     q_ball: Query<Entity, With<Ball>>,
 ) {
-    if keys.just_pressed(KeyCode::Up) {
-        commands
-            .entity(q_ball.single())
-            .insert(ExternalForce {
-                force: Vec3::new(0.0, 0.0, -5.0),
-                ..default() // torque: Vec3::new(1.0, 2.0, 3.0),
-            })
-            .insert(ForceTimer(Timer::new(
-                Duration::from_millis(200),
-                TimerMode::Once,
-            )));
-    } else if keys.just_pressed(KeyCode::Down) {
-        commands
-            .entity(q_ball.single())
-            .insert(ExternalForce {
-                force: Vec3::new(0.0, 0.0, 5.0),
-                // torque: Vec3::new(1.0, 2.0, 3.0),
-                ..default()
-            })
-            .insert(ForceTimer(Timer::new(
-                Duration::from_millis(200),
-                TimerMode::Once,
-            )));
-    } else if keys.just_pressed(KeyCode::Left) {
-        commands
-            .entity(q_ball.single())
-            .insert(ExternalForce {
-                force: Vec3::new(-5.0, 0.0, 0.0),
-                torque: Vec3::new(0.1, 0.1, 0.1),
-                ..default()
-            })
-            .insert(ForceTimer(Timer::new(
-                Duration::from_millis(20),
-                TimerMode::Once,
-            )));
-    } else if keys.just_pressed(KeyCode::Right) {
-        commands
-            .entity(q_ball.single())
-            .insert(ExternalForce {
-                force: Vec3::new(5.0, 0.0, 0.0),
-                // torque: Vec3::new(1.0, 2.0, 3.0),
-                ..default()
-            })
-            .insert(ForceTimer(Timer::new(
-                Duration::from_millis(20),
-                TimerMode::Once,
-            )));
-    }
-}
-
-pub fn remove_force(
-    mut commands: Commands,
-    mut q_ball: Query<(Entity, &mut ForceTimer), With<Ball>>,
-    time: Res<Time>,
-) {
-    for (entity, mut force_timer) in &mut q_ball {
-        force_timer.0.tick(time.delta());
-        if force_timer.0.finished() {
-            commands
-                .entity(entity)
-                .remove::<ExternalForce>()
-                .remove::<ForceTimer>();
+    for entity in &q_ball {
+        if keys.just_pressed(KeyCode::Up) {
+            // TODO 可以改在setup中创建，这里直接更新component
+            commands.entity(entity).insert((
+                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+                ExternalImpulse {
+                    impulse: Vec3::new(0.0, 0.0, -7.0),
+                    ..default()
+                },
+                // 阻尼 https://en.wikipedia.org/wiki/Damping
+                Damping {
+                    linear_damping: 0.2,
+                    angular_damping: 1.0,
+                },
+            ));
+        } else if keys.just_pressed(KeyCode::Down) {
+            commands.entity(entity).insert((
+                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+                ExternalImpulse {
+                    impulse: Vec3::new(0.0, 0.0, 7.0),
+                    ..default()
+                },
+                // 阻尼 https://en.wikipedia.org/wiki/Damping
+                Damping {
+                    linear_damping: 0.2,
+                    angular_damping: 1.0,
+                },
+            ));
+        } else if keys.just_pressed(KeyCode::Left) {
+            commands.entity(entity).insert((
+                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+                ExternalImpulse {
+                    impulse: Vec3::new(-7.0, 0.0, 0.0),
+                    ..default()
+                },
+                // 阻尼 https://en.wikipedia.org/wiki/Damping
+                Damping {
+                    linear_damping: 0.2,
+                    angular_damping: 1.0,
+                },
+            ));
+        } else if keys.just_pressed(KeyCode::Right) {
+            commands.entity(entity).insert((
+                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+                ExternalImpulse {
+                    impulse: Vec3::new(7.0, 0.0, 0.0),
+                    torque_impulse: Vec3::new(0.5, 0.3, 0.5),
+                    ..default()
+                },
+                // 阻尼 https://en.wikipedia.org/wiki/Damping
+                Damping {
+                    linear_damping: 0.2,
+                    angular_damping: 1.0,
+                },
+            ));
         }
     }
 }
