@@ -1,9 +1,11 @@
-use bevy::input::mouse::{MouseMotion, MouseWheel};
+use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 use bevy::window::CompositeAlphaMode;
 use bevy_inspector_egui::prelude::*;
 use bevy_rapier3d::prelude::*;
 use display_info::DisplayInfo;
+
+mod util;
 
 const WALL_HEIGHT_HALF_SIZE: f32 = 10.0;
 const WALL_THICKNESS: f32 = 0.1;
@@ -14,26 +16,11 @@ const BALL_RADIUS: f32 = 0.5;
 
 fn main() {
     // 计算屏幕大小和窗口位置
-    println!("all displayinfo: {:?}", DisplayInfo::all());
-    let min_position = DisplayInfo::all()
-        .map(|x| {
-            x.iter().fold(Vec2::ZERO, |acc, info| {
-                Vec2::new(acc.x.min(info.x as f32), acc.y.min(info.y as f32))
-            })
-        })
-        .unwrap_or_default();
-    let max_position = DisplayInfo::all()
-        .map(|x| {
-            x.iter().fold(Vec2::ZERO, |acc, info| {
-                Vec2::new(
-                    acc.x.max(info.x as f32 + info.width as f32),
-                    acc.y.max(info.y as f32 + info.height as f32),
-                )
-            })
-        })
-        .unwrap_or_default();
-    let size = (max_position - min_position).abs();
-    println!("Size: {}, Position: {}", size, min_position);
+    let primary_display = util::primary_display();
+    if primary_display.is_none() {
+        panic!("There is no primary display");
+    }
+    let primary_display = primary_display.unwrap();
 
     App::new()
         // .insert_resource(ClearColor(Color::NONE))
@@ -44,10 +31,13 @@ fn main() {
                 decorations: true,
                 alpha_mode: CompositeAlphaMode::PostMultiplied, // work around, track issue https://github.com/bevyengine/bevy/issues/6330
                 // always_on_top: true,
-                position: WindowPosition::At(min_position),
+                position: WindowPosition::At(Vec2::new(
+                    primary_display.x as f32,
+                    primary_display.y as f32,
+                )),
                 monitor: MonitorSelection::Primary,
-                width: size.x,
-                height: size.y,
+                width: primary_display.width as f32,
+                height: primary_display.height as f32,
                 ..default()
             },
             ..default()
@@ -87,30 +77,16 @@ fn setup_area(
     asset_server: Res<AssetServer>,
 ) {
     // 计算屏幕大小和窗口位置
-    let min_position = DisplayInfo::all()
-        .map(|x| {
-            x.iter().fold(Vec2::ZERO, |acc, info| {
-                Vec2::new(acc.x.min(info.x as f32), acc.y.min(info.y as f32))
-            })
-        })
-        .unwrap_or_default();
-    let max_position = DisplayInfo::all()
-        .map(|x| {
-            x.iter().fold(Vec2::ZERO, |acc, info| {
-                Vec2::new(
-                    acc.x.max(info.x as f32 + info.width as f32),
-                    acc.y.max(info.y as f32 + info.height as f32),
-                )
-            })
-        })
-        .unwrap_or_default();
-    let size = (max_position - min_position).abs();
-    println!("Size: {}, Position: {}", size, min_position);
+    let primary_display = util::primary_display();
+    if primary_display.is_none() {
+        panic!("There is no primary display");
+    }
+    let primary_display = primary_display.unwrap();
 
     // 区域大小跟相机高度有关，0.00092为手工测试出的比例
     let factor = CAMERA_HEIGHT_SIZE * 0.00092;
-    let area_length = factor * size.x;
-    let area_width = factor * size.y;
+    let area_length = factor * primary_display.width as f32;
+    let area_width = factor * primary_display.height as f32;
     println!("area: {} x {}", area_length, area_width);
 
     // 长方体地面
@@ -184,76 +160,40 @@ fn setup_area(
             // material: materials.add(Color::RED.into()),
             transform: Transform::from_xyz(0.0, 4.0, 0.0),
             ..default()
-        });
+        })
+        .insert((
+            // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+            ExternalImpulse {
+                impulse: Vec3::new(0.0, 0.0, 0.0),
+                torque_impulse: Vec3::new(0.0, 0.0, 0.0),
+                ..default()
+            },
+            // 阻尼 https://en.wikipedia.org/wiki/Damping
+            Damping {
+                linear_damping: 0.2,
+                angular_damping: 1.0,
+            },
+        ));
 }
 
-fn input_force(
-    mut commands: Commands,
-    keys: Res<Input<KeyCode>>,
-    q_ball: Query<Entity, With<Ball>>,
-) {
-    for entity in &q_ball {
+fn input_force(keys: Res<Input<KeyCode>>, mut q_ball: Query<&mut ExternalImpulse, With<Ball>>) {
+    for mut external_impulse in &mut q_ball {
         if keys.just_pressed(KeyCode::Up) {
-            // TODO 可以改在setup中创建，这里直接更新component
-            commands.entity(entity).insert((
-                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-                ExternalImpulse {
-                    impulse: Vec3::new(0.0, 0.0, -7.0),
-                    ..default()
-                },
-                // 阻尼 https://en.wikipedia.org/wiki/Damping
-                Damping {
-                    linear_damping: 0.2,
-                    angular_damping: 1.0,
-                },
-            ));
+            external_impulse.impulse += Vec3::new(0.0, 0.0, -7.0);
         } else if keys.just_pressed(KeyCode::Down) {
-            commands.entity(entity).insert((
-                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-                ExternalImpulse {
-                    impulse: Vec3::new(0.0, 0.0, 7.0),
-                    ..default()
-                },
-                // 阻尼 https://en.wikipedia.org/wiki/Damping
-                Damping {
-                    linear_damping: 0.2,
-                    angular_damping: 1.0,
-                },
-            ));
+            external_impulse.impulse += Vec3::new(0.0, 0.0, 7.0);
         } else if keys.just_pressed(KeyCode::Left) {
-            commands.entity(entity).insert((
-                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-                ExternalImpulse {
-                    impulse: Vec3::new(-7.0, 0.0, 0.0),
-                    ..default()
-                },
-                // 阻尼 https://en.wikipedia.org/wiki/Damping
-                Damping {
-                    linear_damping: 0.2,
-                    angular_damping: 1.0,
-                },
-            ));
+            external_impulse.impulse += Vec3::new(-7.0, 0.0, 0.0);
         } else if keys.just_pressed(KeyCode::Right) {
-            commands.entity(entity).insert((
-                // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-                ExternalImpulse {
-                    impulse: Vec3::new(7.0, 0.0, 0.0),
-                    torque_impulse: Vec3::new(0.5, 0.3, 0.5),
-                    ..default()
-                },
-                // 阻尼 https://en.wikipedia.org/wiki/Damping
-                Damping {
-                    linear_damping: 0.2,
-                    angular_damping: 1.0,
-                },
-            ));
+            external_impulse.impulse += Vec3::new(7.0, 0.0, 0.0);
+            external_impulse.torque_impulse += Vec3::new(0.5, 0.3, 0.5);
         }
     }
 }
 
 pub fn play_ball(
     mut commands: Commands,
-    q_ball: Query<(Entity, &Transform), With<Ball>>,
+    mut q_ball: Query<(&mut ExternalImpulse, &Transform), With<Ball>>,
     mut motion_evr: EventReader<MouseMotion>,
     windows: Res<Windows>,
 ) {
@@ -269,7 +209,7 @@ pub fn play_ball(
             "cursor_position: {}, cursor_3d_pos: {:?}",
             cursor_position, cursor_3d_pos,
         );
-        for (ball_entity, ball_transform) in &q_ball {
+        for (mut external_impulse, ball_transform) in &mut q_ball {
             if cursor_3d_pos.distance(ball_transform.translation) <= BALL_RADIUS {
                 println!("cursor hitted ball");
                 // motion.delta.x 鼠标左滑为负、右滑为正
@@ -277,19 +217,9 @@ pub fn play_ball(
                 for motion_ev in motion_evr.iter() {
                     // println!("Mouse moved: X: {} px, Y: {} px", motion_ev.delta.x, motion_ev.delta.y);
                     // TODO test
-                    commands.entity(ball_entity).insert((
-                        // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-                        ExternalImpulse {
-                            impulse: Vec3::new(motion_ev.delta.x, 0.0, motion_ev.delta.y),
-                            torque_impulse: Vec3::new(0.5, 0.3, 0.5),
-                            ..default()
-                        },
-                        // 阻尼 https://en.wikipedia.org/wiki/Damping
-                        Damping {
-                            linear_damping: 0.2,
-                            angular_damping: 1.0,
-                        },
-                    ));
+                    external_impulse.impulse +=
+                        Vec3::new(0.1 * motion_ev.delta.x, 0.0, 0.1 * motion_ev.delta.y);
+                    external_impulse.torque_impulse += Vec3::new(0.1, 0.1, 0.1);
                 }
             }
         }
