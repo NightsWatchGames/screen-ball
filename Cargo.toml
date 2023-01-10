@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 # bevy = { git = "https://github.com/bevyengine/bevy?rev=b44b606d29f7bea22e725452af41944f6fc8d630" }
-bevy = "0.9"
+# bevy = { git = "https://github.com/bevyengine/bevy" }
+bevy = "0.9.1"
 bevy_rapier3d = "0.19.0"
+# bevy_rapier3d = { git = "https://github.com/dimforge/bevy_rapier" }
 bevy-inspector-egui = "0.14.0"
 display-info = "0.3.2"
