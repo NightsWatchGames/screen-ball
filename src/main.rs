@@ -1,4 +1,3 @@
-use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 use bevy::window::CompositeAlphaMode;
 use bevy_inspector_egui::prelude::*;
@@ -21,11 +20,11 @@ fn main() {
     let primary_display = primary_display.unwrap();
 
     App::new()
-        // .insert_resource(ClearColor(Color::NONE))
-        .insert_resource(ClearColor(Color::BLACK))
+        .insert_resource(ClearColor(Color::NONE))
+        // .insert_resource(ClearColor(Color::BLACK))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
-                transparent: false,
+                transparent: true,
                 decorations: true,
                 alpha_mode: CompositeAlphaMode::PostMultiplied, // work around, track issue https://github.com/bevyengine/bevy/issues/6330
                 // always_on_top: true,

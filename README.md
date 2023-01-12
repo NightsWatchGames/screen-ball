@@ -5,9 +5,9 @@
 - [ ] 多显示器支持
 
 ## 参考资料
-1. 概念来自 Bevy Discord 社区 PaulH#7052 发布的视频
-[beach_ball.webm](https://user-images.githubusercontent.com/17514693/210358262-19bf32ef-b4f2-42a9-833e-4b9349816532.webm)
+1. 概念来自 Bevy Discord 社区 PaulH#7052 发布的视频 [beach_ball.webm](https://user-images.githubusercontent.com/17514693/210358262-19bf32ef-b4f2-42a9-833e-4b9349816532.webm)
 2. [bevy_rapier 文档](https://rapier.rs/docs/user_guides/bevy_plugin/getting_started_bevy)
+3. [Online 3D Viewer](https://www.creators3d.com/online-viewer)
 
 ## 问题
 **1.纹理（Texture）、贴图（Map）、材质（Material）怎么理解？**

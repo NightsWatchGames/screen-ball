@@ -1,7 +1,7 @@
+use crate::camera;
+use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use bevy::input::mouse::MouseMotion;
-use crate::camera;
 
 // 球半径
 const BALL_RADIUS: f32 = 1.0;
@@ -9,40 +9,34 @@ const BALL_RADIUS: f32 = 1.0;
 #[derive(Debug, Component)]
 pub struct Ball;
 
-pub fn setup_ball(    
+pub fn setup_ball(
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    let ball_handle: Handle<Mesh> = asset_server.load("models/football.gltf#Mesh0/Primitive0");
     // 球体
-    commands
-        .spawn(RigidBody::Dynamic)
-        .insert(Ball)
-        .insert(Collider::ball(BALL_RADIUS))
-        // 恢复系数，影响碰撞后的反弹程度 https://en.wikipedia.org/wiki/Coefficient_of_restitution
-        .insert(Restitution::coefficient(1.0))
-        .insert(PbrBundle {
-            // mesh: meshes.add(Mesh::from(shape::UVSphere::default())),
-            mesh: ball_handle,
-            // material: materials.add(Color::RED.into()),
+    commands.spawn((
+        SceneBundle {
+            scene: asset_server.load("models/football.gltf#Scene0"),
             transform: Transform::from_xyz(0.0, 4.0, 0.0),
             ..default()
-        })
-        .insert((
-            // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-            ExternalImpulse {
-                impulse: Vec3::new(0.0, 0.0, 0.0),
-                torque_impulse: Vec3::new(0.0, 0.0, 0.0),
-                ..default()
-            },
-            // 阻尼 https://en.wikipedia.org/wiki/Damping
-            Damping {
-                linear_damping: 0.2,
-                angular_damping: 1.0,
-            },
-        ));
+        },
+        RigidBody::Dynamic,
+        Ball,
+        Collider::ball(BALL_RADIUS),
+        // 恢复系数，影响碰撞后的反弹程度 https://en.wikipedia.org/wiki/Coefficient_of_restitution
+        Restitution::coefficient(1.0),
+        // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
+        ExternalImpulse {
+            impulse: Vec3::new(0.0, 0.0, 0.0),
+            torque_impulse: Vec3::new(0.0, 0.0, 0.0),
+            ..default()
+        },
+        // 阻尼 https://en.wikipedia.org/wiki/Damping
+        Damping {
+            linear_damping: 0.2,
+            angular_damping: 1.0,
+        },
+    ));
 }
 
 pub fn play_ball(
