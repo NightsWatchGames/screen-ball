@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use bevy::window::CompositeAlphaMode;
 use bevy_inspector_egui::prelude::*;
 use bevy_rapier3d::prelude::*;
-use display_info::DisplayInfo;
 
 mod ball;
 mod camera;

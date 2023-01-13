@@ -1,8 +1,18 @@
 # screen-ball 在屏幕上踢球
 - [x] 足球运动模拟
-- [ ] 鼠标控制踢球
-- [ ] 3d模型载入
+- [x] 鼠标控制踢球
+- [x] 3d模型载入
 - [ ] 多显示器支持
+
+## 运行
+1. 本地运行
+```
+cargo run
+```
+
+## 游戏展示
+视频演示：TODO
+截图TODO
 
 ## 参考资料
 1. 概念来自 Bevy Discord 社区 PaulH#7052 发布的视频 [beach_ball.webm](https://user-images.githubusercontent.com/17514693/210358262-19bf32ef-b4f2-42a9-833e-4b9349816532.webm)
