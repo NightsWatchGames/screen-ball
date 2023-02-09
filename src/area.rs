@@ -6,9 +6,8 @@ use crate::{camera, util};
 const WALL_HEIGHT_HALF_SIZE: f32 = 10.0;
 const WALL_THICKNESS: f32 = 0.1;
 
-pub fn setup_area(
-    mut commands: Commands,
-) {
+pub fn setup_area(mut commands: Commands) {
+    // TODO 如果两个区域的墙存在重叠，则此区域是连通的
     // 计算屏幕大小和窗口位置
     let primary_display = util::primary_display();
     if primary_display.is_none() {
@@ -78,5 +77,4 @@ pub fn setup_area(
             WALL_HEIGHT_HALF_SIZE,
             -area_width / 2.0,
         )));
-
 }

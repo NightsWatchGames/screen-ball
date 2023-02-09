@@ -1,4 +1,4 @@
-# screen-ball 在屏幕上踢球
+# screen-ball 屏幕踢球游戏
 - [x] 足球运动模拟
 - [x] 鼠标控制踢球
 - [x] 3d模型载入
@@ -30,3 +30,4 @@ Map贴图，实际上是纹理贴图或者纹理映射（Texture Mapping），�
 > https://en.wikipedia.org/wiki/Texture_mapping
 
 **2.踢足球运动模拟，是通过施加力Force还是冲量Impulse更好？**
+游戏效果上看是冲量Impulse，需要结合引擎原理和物理角度解释下TODO

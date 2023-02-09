@@ -10,13 +10,12 @@ pub const CAMERA_HEIGHT_SIZE: f32 = 10.0;
 
 pub fn setup_camera(mut commands: Commands, mut create_window_events: EventWriter<CreateWindow>) {
     // light
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
-            shadows_enabled: true,
+    commands.spawn(DirectionalLightBundle {
+        directional_light: DirectionalLight {
+            illuminance: 10000.0,
             ..default()
         },
-        transform: Transform::from_xyz(100.0, 100.0, 100.0),
+        transform: Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
         ..default()
     });
 
@@ -32,17 +31,17 @@ pub fn setup_camera(mut commands: Commands, mut create_window_events: EventWrite
 
     // TODO 根据display信息创建新窗口
     let non_primary_displays = util::non_primary_displays();
-    let mut non_primary_displays_mock = Vec::new();
-    non_primary_displays_mock.push(DisplayInfo {
-        id: 2,
-        x: 20,
-        y: 600,
-        width: 800,
-        height: 600,
-        rotation: 1.0,
-        scale_factor: 1.0,
-        is_primary: false,
-    });
+    let mut non_primary_displays_mock: Vec<DisplayInfo> = Vec::new();
+    // non_primary_displays_mock.push(DisplayInfo {
+    //     id: 2,
+    //     x: 20,
+    //     y: 600,
+    //     width: 800,
+    //     height: 600,
+    //     rotation: 1.0,
+    //     scale_factor: 1.0,
+    //     is_primary: false,
+    // });
     for display in non_primary_displays_mock {
         let window_id = WindowId::new();
         create_window_events.send(CreateWindow {

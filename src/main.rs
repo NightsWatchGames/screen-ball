@@ -22,7 +22,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 transparent: true,
-                decorations: true,
+                decorations: false,
                 alpha_mode: CompositeAlphaMode::PostMultiplied, // work around, track issue https://github.com/bevyengine/bevy/issues/6330
                 // always_on_top: true,
                 position: WindowPosition::At(Vec2::new(
@@ -36,9 +36,9 @@ fn main() {
             },
             ..default()
         }))
-        .add_plugin(WorldInspectorPlugin::new())
+        // .add_plugin(WorldInspectorPlugin::new())
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugin(RapierDebugRenderPlugin::default())
+        // .add_plugin(RapierDebugRenderPlugin::default())
         .add_startup_system(camera::setup_camera)
         .add_startup_system(area::setup_area)
         .add_startup_system(ball::setup_ball)
