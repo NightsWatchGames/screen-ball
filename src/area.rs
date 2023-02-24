@@ -10,10 +10,6 @@ pub fn setup_area(mut commands: Commands) {
     // TODO 如果两个区域的墙存在重叠，则此区域是连通的
     // 计算屏幕大小和窗口位置
     let primary_display = util::primary_display();
-    if primary_display.is_none() {
-        panic!("There is no primary display");
-    }
-    let primary_display = primary_display.unwrap();
 
     // 区域大小跟相机高度有关，0.00092为手工测试出的比例
     let factor = camera::CAMERA_HEIGHT_SIZE * 0.00092;
@@ -23,7 +19,7 @@ pub fn setup_area(mut commands: Commands) {
 
     // 长方体地面
     commands
-        .spawn(Collider::cuboid(area_length / 2.0, 0.1, area_width / 2.0))
+        .spawn(Collider::cuboid(100000.0, 0.1, 100000.0))
         .insert(TransformBundle::from(Transform::from_translation(
             Vec3::ZERO,
         )));

@@ -12,4 +12,5 @@ bevy = "0.9.1"
 bevy_rapier3d = "0.19.0"
 # bevy_rapier3d = { git = "https://github.com/dimforge/bevy_rapier" }
 bevy-inspector-egui = "0.14.0"
+# TODO 可以使用winit获取
 display-info = "0.3.2"

@@ -10,7 +10,6 @@ const BALL_RADIUS: f32 = 1.0;
 pub struct Ball;
 
 pub fn setup_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
-    // TODO 模型亮度调整
     // 球体
     commands.spawn((
         SceneBundle {

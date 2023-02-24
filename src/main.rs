@@ -3,18 +3,14 @@ use bevy::window::CompositeAlphaMode;
 use bevy_inspector_egui::prelude::*;
 use bevy_rapier3d::prelude::*;
 
+mod area;
 mod ball;
 mod camera;
 mod util;
-mod area;
 
 fn main() {
     // 计算屏幕大小和窗口位置
     let primary_display = util::primary_display();
-    if primary_display.is_none() {
-        panic!("There is no primary display");
-    }
-    let primary_display = primary_display.unwrap();
 
     App::new()
         .insert_resource(ClearColor(Color::NONE))

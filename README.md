@@ -22,6 +22,7 @@ cargo run
 
 ## 问题
 **1.纹理（Texture）、贴图（Map）、材质（Material）怎么理解？**
+
 > Texture纹理，就是一张图，一张PNG或者TAG等等格式的图片；
 Map贴图，实际上是纹理贴图或者纹理映射（Texture Mapping），记住贴图不是图，是一种纹理映射技术，是三维模型的UV和纹理图片的对应关系；
 >Material材质，是体现模型所有的可视属性，包含环境光、漫反射光、镜面反射光等等各种光照模型以及各种贴图等等。
@@ -30,4 +31,5 @@ Map贴图，实际上是纹理贴图或者纹理映射（Texture Mapping），�
 > https://en.wikipedia.org/wiki/Texture_mapping
 
 **2.踢足球运动模拟，是通过施加力Force还是冲量Impulse更好？**
+
 游戏效果上看是冲量Impulse，需要结合引擎原理和物理角度解释下TODO
