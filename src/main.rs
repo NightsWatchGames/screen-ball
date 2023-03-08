@@ -19,6 +19,8 @@ fn main() {
                 transparent: true,
                 decorations: false,
                 window_level: WindowLevel::AlwaysOnTop,
+                #[cfg(target_os = "macos")]
+                composite_alpha_mode: CompositeAlphaMode::PostMultiplied,
                 // windows系统上窗口不能跟显示器一样大，会导致背景不是透明（为黑色）
                 resolution: WindowResolution::new(
                     primary_display.width as f32 * 0.99,

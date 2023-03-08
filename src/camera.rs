@@ -37,6 +37,8 @@ pub fn setup_camera(mut commands: Commands) {
                 transparent: true,
                 decorations: false,
                 window_level: WindowLevel::AlwaysOnTop,
+                #[cfg(target_os = "macos")]
+                composite_alpha_mode: CompositeAlphaMode::PostMultiplied,
                 resolution: WindowResolution::new(
                     display.width as f32 * 0.99,
                     display.height as f32 * 0.99,
