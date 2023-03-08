@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use bevy::window::CompositeAlphaMode;
-use bevy_inspector_egui::prelude::*;
+use bevy::window::{CompositeAlphaMode, WindowLevel, WindowMode, WindowResolution};
 use bevy_rapier3d::prelude::*;
 
 mod area;
@@ -16,34 +15,36 @@ fn main() {
         .insert_resource(ClearColor(Color::NONE))
         // .insert_resource(ClearColor(Color::BLACK))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 transparent: true,
                 decorations: false,
-                alpha_mode: CompositeAlphaMode::PostMultiplied, // work around, track issue https://github.com/bevyengine/bevy/issues/6330
-                // always_on_top: true,
-                position: WindowPosition::At(Vec2::new(
-                    primary_display.x as f32,
-                    primary_display.y as f32,
-                )),
-                monitor: MonitorSelection::Primary,
-                width: primary_display.width as f32,
-                height: primary_display.height as f32,
+                window_level: WindowLevel::AlwaysOnTop,
+                // windows系统上窗口不能跟显示器一样大，会导致背景不是透明（为黑色）
+                resolution: WindowResolution::new(
+                    primary_display.width as f32 * 0.99,
+                    primary_display.height as f32 * 0.99,
+                ),
+                position: WindowPosition::At(IVec2::new(0, 0)),
                 ..default()
-            },
+            }),
             ..default()
         }))
-        // .add_plugin(WorldInspectorPlugin::new())
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         // .add_plugin(RapierDebugRenderPlugin::default())
         .add_startup_system(camera::setup_camera)
         .add_startup_system(area::setup_area)
         .add_startup_system(ball::setup_ball)
         .add_system(ball::play_ball)
+        .add_system(toggle_mouse_passthrough)
         .run();
 }
 
 // TODO 窗口不接收鼠标事件，将鼠标事件透给下面窗口
-// fn window_init(mut windows: ResMut<Windows>) {
-//     let window = windows.primary_mut();
-//     window.set_cursor_grab_mode(false);
-// }
+// 待 https://github.com/bevyengine/bevy/pull/7966 和 https://github.com/bevyengine/bevy/pull/7968 合入后移除此system
+fn toggle_mouse_passthrough(keyboard_input: Res<Input<KeyCode>>, mut windows: Query<&mut Window>) {
+    if keyboard_input.just_pressed(KeyCode::P) {
+        for mut window in &mut windows {
+            window.cursor.hit_test = !window.cursor.hit_test;
+        }
+    }
+}

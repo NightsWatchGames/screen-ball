@@ -6,11 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# bevy = { git = "https://github.com/bevyengine/bevy?rev=b44b606d29f7bea22e725452af41944f6fc8d630" }
-# bevy = { git = "https://github.com/bevyengine/bevy" }
-bevy = "0.9.1"
-bevy_rapier3d = "0.19.0"
-# bevy_rapier3d = { git = "https://github.com/dimforge/bevy_rapier" }
-bevy-inspector-egui = "0.14.0"
+bevy = "0.10"
+bevy_rapier3d = "0.21"
 # TODO 可以使用winit获取
 display-info = "0.3.2"

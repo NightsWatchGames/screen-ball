@@ -39,7 +39,7 @@ pub fn setup_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
 pub fn play_ball(
     mut q_ball: Query<(&mut ExternalImpulse, &Transform), With<Ball>>,
     mut motion_evr: EventReader<MouseMotion>,
-    windows: Res<Windows>,
+    windows: Query<&Window>,
 ) {
     for window in windows.iter() {
         // cursor_position原点在窗口左下角
