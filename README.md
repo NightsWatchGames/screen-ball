@@ -2,8 +2,10 @@
 - [x] 足球运动模拟
 - [x] 鼠标控制踢球
 - [x] 3d模型载入
-- [ ] 鼠标输入等事件落入下面窗口
+- [x] 鼠标输入等事件落入下面窗口
 - [ ] 多显示器支持
+
+The project is blocking by windowing issues https://github.com/bevyengine/bevy/issues/7600 and https://github.com/bevyengine/bevy/issues/7975.
 
 ## 运行
 1. 本地运行
