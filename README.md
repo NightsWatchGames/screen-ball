@@ -1,3 +1,5 @@
+[English](README_EN.md)
+
 # screen-ball 屏幕踢球游戏
 - [x] 足球运动模拟
 - [x] 鼠标控制踢球
@@ -10,20 +12,9 @@
 ```
 cargo run
 ```
-2. WASM
-```
-rustup target install wasm32-unknown-unknown
-cargo install wasm-server-runner
-cargo run --target wasm32-unknown-unknown
-```
-```
-cargo install wasm-bindgen-cli
-cargo build --release --target wasm32-unknown-unknown
-wasm-bindgen --out-dir ./out/ --target web ./target/wasm32-unknown-unknown/release/screen-ball.wasm
-```
 
 ## 游戏展示
-视频演示：TODO
+视频演示：[B站](https://www.bilibili.com/video/BV1f84y1g75K)
 ![screen-ball](screenshots/screen-ball.png)
 
 ## 参考资料

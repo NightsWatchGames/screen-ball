@@ -11,20 +11,9 @@ work and play ball
 ```
 cargo run
 ```
-2. WASM
-```
-rustup target install wasm32-unknown-unknown
-cargo install wasm-server-runner
-cargo run --target wasm32-unknown-unknown
-```
-```
-cargo install wasm-bindgen-cli
-cargo build --release --target wasm32-unknown-unknown
-wasm-bindgen --out-dir ./out/ --target web ./target/wasm32-unknown-unknown/release/screen-ball.wasm
-```
 
 ## Screenshots
-Video：TODO
+Video: [Youtube](https://www.youtube.com/watch?v=pKV6fTmJfmE)
 ![screen-ball](screenshots/screen-ball.png)
 
 ## References
