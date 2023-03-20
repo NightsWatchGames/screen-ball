@@ -1,4 +1,5 @@
 /target
+/out
 .vscode
 .idea
 .DS_Store

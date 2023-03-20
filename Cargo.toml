@@ -9,4 +9,4 @@ edition = "2021"
 bevy = "0.10"
 bevy_rapier3d = "0.21"
 # TODO 可以使用winit获取
-display-info = "0.3.2"
+display-info = "0.4.1"

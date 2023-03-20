@@ -49,13 +49,13 @@ pub fn play_ball(
             let z = (window.height() / 2.0 - cursor_position.y) * factor;
             // 鼠标映射到3d世界的坐标（类比脚踢球）
             let cursor_3d_pos = Vec3::new(x, BALL_RADIUS, z);
-            println!(
-                "cursor_position: {}, cursor_3d_pos: {:?}",
-                cursor_position, cursor_3d_pos,
-            );
+            // println!(
+            //     "cursor_position: {}, cursor_3d_pos: {:?}",
+            //     cursor_position, cursor_3d_pos,
+            // );
             for (mut external_impulse, ball_transform) in &mut q_ball {
                 if cursor_3d_pos.distance(ball_transform.translation) <= BALL_RADIUS {
-                    println!("cursor hitted ball");
+                    // println!("cursor hitted ball");
                     // motion.delta.x 鼠标左滑为负、右滑为正，motion.delta.y 鼠标上滑为负、下滑为正
                     for motion_ev in motion_evr.iter() {
                         // println!("Mouse moved: X: {} px, Y: {} px", motion_ev.delta.x, motion_ev.delta.y);

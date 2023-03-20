@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::window::{CompositeAlphaMode, WindowLevel, WindowMode, WindowResolution};
+use bevy::window::{CompositeAlphaMode, WindowLevel, WindowResolution};
 use bevy_rapier3d::prelude::*;
 
 mod area;
@@ -13,7 +13,6 @@ fn main() {
 
     App::new()
         .insert_resource(ClearColor(Color::NONE))
-        // .insert_resource(ClearColor(Color::BLACK))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 transparent: true,
