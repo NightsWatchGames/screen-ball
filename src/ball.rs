@@ -42,11 +42,11 @@ pub fn play_ball(
     windows: Query<&Window>,
 ) {
     for window in windows.iter() {
-        // cursor_position原点在窗口左下角
+        // cursor_position原点在窗口左上角
         if let Some(cursor_position) = window.cursor_position() {
             let factor = camera::CAMERA_HEIGHT_SIZE * 0.00092;
             let x = (cursor_position.x - window.width() / 2.0) * factor;
-            let z = (window.height() / 2.0 - cursor_position.y) * factor;
+            let z = (cursor_position.y - window.height() / 2.0) * factor;
             // 鼠标映射到3d世界的坐标（类比脚踢球）
             let cursor_3d_pos = Vec3::new(x, BALL_RADIUS, z);
             // println!(
