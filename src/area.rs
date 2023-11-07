@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 
 use crate::{camera, util};
 
-const WALL_HEIGHT_HALF_SIZE: f32 = 10.0;
+const WALL_HEIGHT_SIZE: f32 = 20.0;
 const WALL_THICKNESS: f32 = 0.1;
 
 pub fn setup_area(mut commands: Commands) {
@@ -18,59 +18,51 @@ pub fn setup_area(mut commands: Commands) {
     println!("area: {} x {}", area_length, area_width);
 
     // 长方体地面
-    commands
-        .spawn(Collider::cuboid(100000.0, 0.1, 100000.0))
-        .insert(TransformBundle::from(Transform::from_translation(
-            Vec3::ZERO,
-        )));
+    commands.spawn((
+        Collider::cuboid(100000.0, 0.1, 100000.0),
+        RigidBody::Static,
+        TransformBundle::from(Transform::from_translation(Vec3::ZERO)),
+    ));
 
     // 围墙（从Y向NEG_Y俯视）
     // 左围墙
-    commands
-        .spawn(Collider::cuboid(
-            WALL_THICKNESS,
-            WALL_HEIGHT_HALF_SIZE,
-            area_width / 2.0,
-        ))
-        .insert(TransformBundle::from(Transform::from_xyz(
+    commands.spawn((
+        Collider::cuboid(WALL_THICKNESS, WALL_HEIGHT_SIZE, area_width),
+        RigidBody::Static,
+        TransformBundle::from(Transform::from_xyz(
             -area_length / 2.0,
-            WALL_HEIGHT_HALF_SIZE,
+            WALL_HEIGHT_SIZE / 2.0,
             0.0,
-        )));
+        )),
+    ));
     // 右围墙
-    commands
-        .spawn(Collider::cuboid(
-            WALL_THICKNESS,
-            WALL_HEIGHT_HALF_SIZE,
-            area_width / 2.0,
-        ))
-        .insert(TransformBundle::from(Transform::from_xyz(
+    commands.spawn((
+        Collider::cuboid(WALL_THICKNESS, WALL_HEIGHT_SIZE, area_width),
+        RigidBody::Static,
+        TransformBundle::from(Transform::from_xyz(
             area_length / 2.0,
-            WALL_HEIGHT_HALF_SIZE,
+            WALL_HEIGHT_SIZE / 2.0,
             0.0,
-        )));
+        )),
+    ));
     // 下围墙
-    commands
-        .spawn(Collider::cuboid(
-            area_length / 2.0,
-            WALL_HEIGHT_HALF_SIZE,
-            WALL_THICKNESS,
-        ))
-        .insert(TransformBundle::from(Transform::from_xyz(
+    commands.spawn((
+        Collider::cuboid(area_length, WALL_HEIGHT_SIZE, WALL_THICKNESS),
+        RigidBody::Static,
+        TransformBundle::from(Transform::from_xyz(
             0.0,
-            WALL_HEIGHT_HALF_SIZE,
+            WALL_HEIGHT_SIZE / 2.0,
             area_width / 2.0,
-        )));
+        )),
+    ));
     // 上围墙
-    commands
-        .spawn(Collider::cuboid(
-            area_length / 2.0,
-            WALL_HEIGHT_HALF_SIZE,
-            WALL_THICKNESS,
-        ))
-        .insert(TransformBundle::from(Transform::from_xyz(
+    commands.spawn((
+        Collider::cuboid(area_length, WALL_HEIGHT_SIZE, WALL_THICKNESS),
+        RigidBody::Static,
+        TransformBundle::from(Transform::from_xyz(
             0.0,
-            WALL_HEIGHT_HALF_SIZE,
+            WALL_HEIGHT_SIZE / 2.0,
             -area_width / 2.0,
-        )));
+        )),
+    ));
 }

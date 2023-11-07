@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::window::{CompositeAlphaMode, Cursor, WindowLevel, WindowResolution};
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 
 mod area;
 mod ball;
@@ -34,8 +34,7 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        // .add_plugin(RapierDebugRenderPlugin::default())
+        .add_plugins(PhysicsPlugins::default())
         .add_systems(
             Startup,
             (camera::setup_camera, area::setup_area, ball::setup_ball),

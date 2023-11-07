@@ -1,7 +1,7 @@
 use crate::camera;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 
 // 球半径
 const BALL_RADIUS: f32 = 1.0;
@@ -21,18 +21,12 @@ pub fn setup_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
         Ball,
         Collider::ball(BALL_RADIUS),
         // 恢复系数，影响碰撞后的反弹程度 https://en.wikipedia.org/wiki/Coefficient_of_restitution
-        Restitution::coefficient(1.0),
+        Restitution::new(1.0),
         // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
-        ExternalImpulse {
-            impulse: Vec3::new(0.0, 0.0, 0.0),
-            torque_impulse: Vec3::new(0.0, 0.0, 0.0),
-            ..default()
-        },
+        ExternalImpulse::new(Vec3::new(0.0, 0.0, 0.0)),
         // 阻尼 https://en.wikipedia.org/wiki/Damping
-        Damping {
-            linear_damping: 0.2,
-            angular_damping: 1.0,
-        },
+        LinearDamping(0.2),
+        AngularDamping(1.0),
     ));
 }
 
@@ -60,8 +54,11 @@ pub fn play_ball(
                     for motion_ev in motion_evr.iter() {
                         // println!("Mouse moved: X: {} px, Y: {} px", motion_ev.delta.x, motion_ev.delta.y);
                         // TODO 根据鼠标移动速度、移动方向与球夹角 判断冲量和转矩冲量大小
-                        external_impulse.impulse =
-                            Vec3::new(0.5 * motion_ev.delta.x, 0.0, 0.5 * motion_ev.delta.y);
+                        external_impulse.apply_impulse(Vec3::new(
+                            0.5 * motion_ev.delta.x,
+                            0.0,
+                            0.5 * motion_ev.delta.y,
+                        ));
                         // external_impulse.torque_impulse = Vec3::new(0.1, 0.1, 0.1);
                     }
                 }

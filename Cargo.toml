@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.11"
-bevy_rapier3d = "0.22"
+bevy = "0.12"
+bevy_xpbd_3d = "0.3.1"
 # TODO 可以使用winit获取
 display-info = "0.4.1"
