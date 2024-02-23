@@ -51,7 +51,7 @@ pub fn play_ball(
                 if cursor_3d_pos.distance(ball_transform.translation) <= BALL_RADIUS {
                     // println!("cursor hitted ball");
                     // motion.delta.x 鼠标左滑为负、右滑为正，motion.delta.y 鼠标上滑为负、下滑为正
-                    for motion_ev in motion_evr.iter() {
+                    for motion_ev in motion_evr.read() {
                         // println!("Mouse moved: X: {} px, Y: {} px", motion_ev.delta.x, motion_ev.delta.y);
                         // TODO 根据鼠标移动速度、移动方向与球夹角 判断冲量和转矩冲量大小
                         external_impulse.apply_impulse(Vec3::new(
