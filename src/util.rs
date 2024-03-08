@@ -1,5 +1,6 @@
 use display_info::DisplayInfo;
 
+// TODO replace with NonSend<EventLoopProxy> when bevy 0.14 released
 pub fn primary_display() -> DisplayInfo {
     let all_displays = DisplayInfo::all().expect("Failed to get all display info");
     println!("all display info: {:?}", all_displays);

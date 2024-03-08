@@ -35,10 +35,11 @@ fn main() {
             ..default()
         }))
         .add_plugins(PhysicsPlugins::default())
+        .add_plugins(PhysicsDebugPlugin::default())
         .add_systems(
             Startup,
             (camera::setup_camera, area::setup_area, ball::setup_ball),
         )
-        .add_systems(Update, (ball::play_ball,))
+        .add_systems(Update, (ball::play_ball, area::update_wall))
         .run();
 }

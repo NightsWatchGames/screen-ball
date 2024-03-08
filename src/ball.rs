@@ -19,7 +19,7 @@ pub fn setup_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         RigidBody::Dynamic,
         Ball,
-        Collider::ball(BALL_RADIUS),
+        Collider::sphere(BALL_RADIUS),
         // 恢复系数，影响碰撞后的反弹程度 https://en.wikipedia.org/wiki/Coefficient_of_restitution
         Restitution::new(1.0),
         // 冲量，作用在物体上的力在时间上的累积 https://en.wikipedia.org/wiki/Impulse_(physics)
