@@ -1,16 +1,15 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy::window::{CompositeAlphaMode, CursorOptions, WindowLevel, WindowResolution};
+use bevy::window::{CursorOptions, WindowLevel};
+
+#[cfg(target_os = "macos")]
+use bevy::window::CompositeAlphaMode;
 
 mod area;
 mod ball;
 mod camera;
-mod util;
 
 fn main() {
-    // 计算屏幕大小和窗口位置
-    let primary_display = util::primary_display();
-
     App::new()
         .insert_resource(ClearColor(Color::NONE))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
@@ -20,11 +19,6 @@ fn main() {
                 window_level: WindowLevel::AlwaysOnTop,
                 #[cfg(target_os = "macos")]
                 composite_alpha_mode: CompositeAlphaMode::PostMultiplied,
-                // windows系统上窗口不能跟显示器一样大，会导致背景不是透明（为黑色）
-                resolution: WindowResolution::new(
-                    primary_display.width as f32 * 0.99,
-                    primary_display.height as f32 * 0.99,
-                ),
                 position: WindowPosition::At(IVec2::new(0, 0)),
                 cursor_options: CursorOptions {
                     hit_test: false,
@@ -38,7 +32,13 @@ fn main() {
         .add_plugins(PhysicsDebugPlugin::default())
         .add_systems(
             Startup,
-            (camera::setup_camera, area::setup_area, ball::setup_ball).chain(),
+            (
+                camera::setup_primary_window,
+                camera::setup_camera,
+                area::setup_area,
+                ball::setup_ball,
+            )
+                .chain(),
         )
         .add_systems(Update, (ball::play_ball, area::update_wall))
         .run();
