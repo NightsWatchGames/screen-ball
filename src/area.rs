@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use avian3d::prelude::*;
+use bevy::prelude::*;
 
 use crate::camera::CAMERA_HEIGHT_SIZE;
 
@@ -20,7 +20,7 @@ pub fn setup_area(mut commands: Commands) {
     commands.spawn((
         Collider::cuboid(100000.0, 0.1, 100000.0),
         RigidBody::Static,
-        TransformBundle::from(Transform::from_translation(Vec3::ZERO)),
+        Transform::from_translation(Vec3::ZERO),
     ));
 
     // 围墙（从Y向NEG_Y俯视）
@@ -29,44 +29,28 @@ pub fn setup_area(mut commands: Commands) {
         Wall("left".to_string()),
         Collider::cuboid(WALL_THICKNESS, WALL_HEIGHT_SIZE, area_height),
         RigidBody::Static,
-        TransformBundle::from(Transform::from_xyz(
-            -area_width / 2.0,
-            WALL_HEIGHT_SIZE / 2.0,
-            0.0,
-        )),
+        Transform::from_xyz(-area_width / 2.0, WALL_HEIGHT_SIZE / 2.0, 0.0),
     ));
     // 右围墙
     commands.spawn((
         Wall("right".to_string()),
         Collider::cuboid(WALL_THICKNESS, WALL_HEIGHT_SIZE, area_height),
         RigidBody::Static,
-        TransformBundle::from(Transform::from_xyz(
-            area_width / 2.0,
-            WALL_HEIGHT_SIZE / 2.0,
-            0.0,
-        )),
+        Transform::from_xyz(area_width / 2.0, WALL_HEIGHT_SIZE / 2.0, 0.0),
     ));
     // 上围墙
     commands.spawn((
         Wall("up".to_string()),
         Collider::cuboid(area_width, WALL_HEIGHT_SIZE, WALL_THICKNESS),
         RigidBody::Static,
-        TransformBundle::from(Transform::from_xyz(
-            0.0,
-            WALL_HEIGHT_SIZE / 2.0,
-            -area_height / 2.0,
-        )),
+        Transform::from_xyz(0.0, WALL_HEIGHT_SIZE / 2.0, -area_height / 2.0),
     ));
     // 下围墙
     commands.spawn((
         Wall("down".to_string()),
         Collider::cuboid(area_width, WALL_HEIGHT_SIZE, WALL_THICKNESS),
         RigidBody::Static,
-        TransformBundle::from(Transform::from_xyz(
-            0.0,
-            WALL_HEIGHT_SIZE / 2.0,
-            area_height / 2.0,
-        )),
+        Transform::from_xyz(0.0, WALL_HEIGHT_SIZE / 2.0, area_height / 2.0),
     ));
 }
 

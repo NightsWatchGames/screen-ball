@@ -1,7 +1,7 @@
 use crate::camera;
+use avian3d::prelude::*;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use avian3d::prelude::*;
 
 // 球半径
 const BALL_RADIUS: f32 = 1.0;
@@ -12,11 +12,8 @@ pub struct Ball;
 pub fn setup_ball(mut commands: Commands, asset_server: Res<AssetServer>) {
     // 球体
     commands.spawn((
-        SceneBundle {
-            scene: asset_server.load("models/football.gltf#Scene0"),
-            transform: Transform::from_xyz(0.0, 4.0, 0.0),
-            ..default()
-        },
+        SceneRoot(asset_server.load("models/football.gltf#Scene0")),
+        Transform::from_xyz(0.0, 4.0, 0.0),
         RigidBody::Dynamic,
         Ball,
         Collider::sphere(BALL_RADIUS),
@@ -43,13 +40,13 @@ pub fn play_ball(
             let z = (cursor_position.y - window.height() / 2.0) * factor;
             // 鼠标映射到3d世界的坐标（类比脚踢球）
             let cursor_3d_pos = Vec3::new(x, BALL_RADIUS, z);
-            // println!(
-            //     "cursor_position: {}, cursor_3d_pos: {:?}",
-            //     cursor_position, cursor_3d_pos,
-            // );
+            println!(
+                "cursor_position: {}, cursor_3d_pos: {:?}",
+                cursor_position, cursor_3d_pos,
+            );
             for (mut external_impulse, ball_transform) in &mut q_ball {
                 if cursor_3d_pos.distance(ball_transform.translation) <= BALL_RADIUS {
-                    // println!("cursor hitted ball");
+                    println!("cursor hitted ball");
                     // motion.delta.x 鼠标左滑为负、右滑为正，motion.delta.y 鼠标上滑为负、下滑为正
                     for motion_ev in motion_evr.read() {
                         // println!("Mouse moved: X: {} px, Y: {} px", motion_ev.delta.x, motion_ev.delta.y);

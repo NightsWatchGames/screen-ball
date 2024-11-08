@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use bevy::window::{CompositeAlphaMode, Cursor, WindowLevel, WindowResolution};
 use avian3d::prelude::*;
+use bevy::prelude::*;
+use bevy::window::{CompositeAlphaMode, CursorOptions, WindowLevel, WindowResolution};
 
 mod area;
 mod ball;
@@ -26,7 +26,7 @@ fn main() {
                     primary_display.height as f32 * 0.99,
                 ),
                 position: WindowPosition::At(IVec2::new(0, 0)),
-                cursor: Cursor {
+                cursor_options: CursorOptions {
                     hit_test: false,
                     ..default()
                 },
@@ -38,7 +38,7 @@ fn main() {
         .add_plugins(PhysicsDebugPlugin::default())
         .add_systems(
             Startup,
-            (camera::setup_camera, area::setup_area, ball::setup_ball),
+            (camera::setup_camera, area::setup_area, ball::setup_ball).chain(),
         )
         .add_systems(Update, (ball::play_ball, area::update_wall))
         .run();

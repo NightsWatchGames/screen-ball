@@ -10,20 +10,18 @@ pub const CAMERA_HEIGHT_SIZE: f32 = 10.0;
 
 pub fn setup_camera(mut commands: Commands) {
     // light
-    commands.spawn(DirectionalLightBundle {
-        directional_light: DirectionalLight {
+    commands.spawn((
+        DirectionalLight {
             illuminance: 10000.0,
             ..default()
         },
-        transform: Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
-        ..default()
-    });
+        Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
+    ));
 
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, CAMERA_HEIGHT_SIZE, 0.0)
-            .looking_at(Vec3::ZERO, Vec3::NEG_Z),
-        ..default()
-    });
+    commands.spawn((
+        Camera3d::default(),
+        Transform::from_xyz(0.0, CAMERA_HEIGHT_SIZE, 0.0).looking_at(Vec3::ZERO, Vec3::NEG_Z),
+    ));
 
     let primary_display = util::primary_display();
 
