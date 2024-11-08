@@ -1,7 +1,7 @@
 use crate::camera;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 
 // 球半径
 const BALL_RADIUS: f32 = 1.0;

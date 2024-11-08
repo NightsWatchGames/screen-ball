@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::window::{CompositeAlphaMode, Cursor, WindowLevel, WindowResolution};
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 
 mod area;
 mod ball;
