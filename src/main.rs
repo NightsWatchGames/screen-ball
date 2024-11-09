@@ -35,11 +35,12 @@ fn main() {
             (
                 camera::setup_primary_window,
                 camera::setup_camera,
-                area::setup_area,
+                area::setup_ground,
+                area::setup_wall,
                 ball::setup_ball,
             )
                 .chain(),
         )
-        .add_systems(Update, (ball::play_ball, area::update_wall))
+        .add_systems(Update, (ball::play_ball,))
         .run();
 }
