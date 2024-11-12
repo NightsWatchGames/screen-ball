@@ -21,6 +21,11 @@ fn main() {
                 composite_alpha_mode: CompositeAlphaMode::PostMultiplied,
                 position: WindowPosition::At(IVec2::new(0, 0)),
                 cursor_options: CursorOptions {
+                    // TODO There is a bug on windows.
+                    // If we set hit_test false, we can't get cursor position.
+                    #[cfg(target_os = "windows")]
+                    hit_test: true,
+                    #[cfg(not(target_os = "windows"))]
                     hit_test: false,
                     ..default()
                 },
