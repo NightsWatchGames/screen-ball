@@ -7,5 +7,4 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.15"
-#avian3d = "0.1"
-avian3d = { git = "https://github.com/Jondolf/avian.git", branch = "main"}
+avian3d = "0.2"
